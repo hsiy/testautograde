@@ -98,6 +98,12 @@ def main() -> int:
         action="store_true",
         help="Fail if Java returns non-zero exit code.",
     )
+    ap.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Dump standard output.",
+    )
+
     args = ap.parse_args()
 
     stdin_text = args.input.encode("utf-8").decode("unicode_escape")  # turns "\n" into newline
@@ -109,6 +115,8 @@ def main() -> int:
         flags |= re.IGNORECASE
 
     rr = run_java(args.cmd, stdin_text, timeout_s=args.timeout)
+    if args.verbose:
+        print(rr.stdout)
 
     if args.require_zero_exit and rr.returncode != 0:
         print("FAIL: Java program returned non-zero exit code.", file=sys.stderr)
